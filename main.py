@@ -8,7 +8,7 @@ with open("TSLexchange.pkl","rb") as f:
 
 #1100 merge incredibil
 #1200 continua prea agresiv trend-ul
-n = 1206
+n = 1110
 k = 25
 
 times = np.array(artifact["times"][0:n+k])
