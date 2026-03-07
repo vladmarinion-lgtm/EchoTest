@@ -6,9 +6,7 @@ import pickle
 with open("TSLexchange.pkl","rb") as f:
     artifact = pickle.load(f)
 
-#1100 merge incredibil
-#1200 continua prea agresiv trend-ul
-n = 1110
+n = 2010
 k = 25
 
 times = np.array(artifact["times"][0:n+k])
@@ -16,22 +14,19 @@ times = np.array(artifact["times"][0:n+k])
 target = np.transpose(np.array([artifact["target"][0:n + k]]))
 vars = artifact["vars"][0:n,:]
 
-Echo = Reservoir(3500,lr = 1/n,sr = 1.5)
+
+Echo = Reservoir(600,lr = 0.7,sr = 0.99)
 Echo.initialize(x = vars[0,:])
 readout = Ridge(ridge = 1e-7)
 
+Net = Echo >> readout
 
-states = Echo.run(vars)
-print(np.shape(states))
-readout.fit(states,target[:n,:])
+Net.fit(vars,target[:n,:],warmup = 200)
 
 
 testdata = artifact["vars"][n:n+k,:]
-teststates = Echo.run(testdata)
-print(np.shape(teststates))
+pred = Net.run(testdata)
 
-pred = readout.run(teststates)
-print(np.shape(pred))
 
 
 plt.plot(np.concatenate((target[:n,0],pred[:,0])))
